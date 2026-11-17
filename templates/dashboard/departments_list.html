@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Departments - Admin Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-4 my-4">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-1"><i class="bi bi-hospital text-primary me-2"></i> Clinical Departments</h2>
+      <p class="text-muted mb-0">Organize hospital specialties, services, and doctor allocations</p>
+    </div>
+    <a href="{% url 'dashboard:admin_department_create' %}" class="btn btn-primary mt-3 mt-md-0">
+      <i class="bi bi-plus-circle me-1"></i> Add New Department
+    </a>
+  </div>
+
+  <div class="row g-4">
+    {% for dept in departments %}
+      <div class="col-lg-4 col-md-6">
+        <div class="card card-custom p-4 h-100">
+          <div class="d-flex align-items-center mb-3">
+            <div class="stat-icon-wrapper bg-light text-primary me-3 border">
+              <i class="bi {{ dept.icon|default:'bi-hospital' }}"></i>
+            </div>
+            <div>
+              <h5 class="fw-bold mb-0">{{ dept.name }}</h5>
+              <span class="badge {% if dept.is_active %}bg-success-subtle text-success{% else %}bg-secondary-subtle text-dark{% endif %} small">
+                {% if dept.is_active %}Active{% else %}Inactive{% endif %}
+              </span>
+            </div>
+          </div>
+
+          <p class="text-muted small mb-3">{{ dept.description|default:"No description provided." }}</p>
+
+          <div class="d-flex gap-3 small text-muted mb-3 py-2 border-top border-bottom">
+            <div><i class="bi bi-person-badge text-primary me-1"></i> <strong>{{ dept.doctors_count }}</strong> Doctors</div>
+            <div><i class="bi bi-calendar-check text-success me-1"></i> <strong>{{ dept.appointments_count }}</strong> Bookings</div>
+          </div>
+
+          <div class="mt-auto d-flex justify-content-end gap-2">
+            <a href="{% url 'dashboard:admin_department_edit' dept.id %}" class="btn btn-sm btn-outline-primary">
+              <i class="bi bi-pencil me-1"></i> Edit
+            </a>
+            <a href="{% url 'dashboard:admin_department_delete' dept.id %}" class="btn btn-sm btn-outline-danger">
+              <i class="bi bi-trash me-1"></i> Delete
+            </a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-12 text-center py-5 text-muted">
+        <i class="bi bi-hospital fs-1 d-block mb-2"></i>
+        No departments created yet.
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

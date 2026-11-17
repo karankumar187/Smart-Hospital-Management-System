@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+
+{% block title %}Book Appointment - Smart Hospital{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      
+      <div class="row g-4">
+        <!-- Booking Form Column -->
+        <div class="col-lg-7">
+          <div class="card card-custom p-4 p-md-5 shadow-sm">
+            <div class="d-flex align-items-center mb-4">
+              <div class="navbar-brand-icon me-3">
+                <i class="bi bi-calendar-plus-fill"></i>
+              </div>
+              <div>
+                <h4 class="fw-bold mb-0">Schedule an Appointment</h4>
+                <p class="text-muted small mb-0">Choose your physician, pick a convenient date & slot</p>
+              </div>
+            </div>
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                  <div><i class="bi bi-exclamation-triangle-fill me-1"></i> {{ error }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <form method="post" id="appointmentForm" novalidate>
+              {% csrf_token %}
+
+              <!-- Department Selection -->
+              <div class="mb-3">
+                <label for="id_department" class="form-label fw-semibold">1. Select Medical Department</label>
+                {{ form.department }}
+                <div class="form-text small">Filter physicians by clinical specialty.</div>
+              </div>
+
+              <!-- Doctor Selection -->
+              <div class="mb-3">
+                <label for="id_doctor" class="form-label fw-semibold">2. Select Doctor / Specialist <span class="text-danger">*</span></label>
+                {{ form.doctor }}
+                {% if form.doctor.errors %}<div class="text-danger small">{{ form.doctor.errors.0 }}</div>{% endif %}
+              </div>
+
+              <!-- Date Picker -->
+              <div class="mb-3">
+                <label for="id_appointment_date" class="form-label fw-semibold">3. Appointment Date <span class="text-danger">*</span></label>
+                {{ form.appointment_date }}
+                {% if form.appointment_date.errors %}<div class="text-danger small">{{ form.appointment_date.errors.0 }}</div>{% endif %}
+                <div class="form-text small">Select today or a future date.</div>
+              </div>
+
+              <!-- Time Slot -->
+              <div class="mb-3">
+                <label for="id_appointment_time" class="form-label fw-semibold">4. Preferred Time Slot <span class="text-danger">*</span></label>
+                {{ form.appointment_time }}
+                {% if form.appointment_time.errors %}<div class="text-danger small">{{ form.appointment_time.errors.0 }}</div>{% endif %}
+                <div id="slotStatusHelp" class="form-text small text-info"></div>
+              </div>
+
+              <!-- Reason / Complaint -->
+              <div class="mb-4">
+                <label for="id_reason" class="form-label fw-semibold">5. Reason for Visit / Symptoms <span class="text-danger">*</span></label>
+                {{ form.reason }}
+                {% if form.reason.errors %}<div class="text-danger small">{{ form.reason.errors.0 }}</div>{% endif %}
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100 py-3 fw-bold shadow">
+                <i class="bi bi-calendar-check me-2"></i> Confirm & Book Appointment
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Helpful Side Info / Booking Policy Card -->
+        <div class="col-lg-5">
+          <div class="card card-custom p-4 mb-4 bg-light border">
+            <h5 class="fw-bold text-primary mb-3"><i class="bi bi-info-circle me-2"></i> Booking Guidelines</h5>
+            <ul class="list-unstyled small text-muted mb-0">
+              <li class="mb-3 d-flex align-items-start">
+                <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                <span><strong>Instant Conflict Prevention:</strong> Our system prevents overlapping appointments so doctors can dedicate undivided attention.</span>
+              </li>
+              <li class="mb-3 d-flex align-items-start">
+                <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                <span><strong>Status Tracking:</strong> Your booking status begins as <em>Pending</em> and is promptly verified by hospital staff or the attending doctor.</span>
+              </li>
+              <li class="mb-3 d-flex align-items-start">
+                <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                <span><strong>Cancellation Flexibility:</strong> You may cancel pending appointments anytime from your portal.</span>
+              </li>
+              <li class="d-flex align-items-start">
+                <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                <span><strong>Digital Records:</strong> Following your consultation, your diagnosis, clinical notes, and digital prescriptions will be recorded in your profile.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="card card-custom p-4 text-center border-0 bg-primary-subtle text-primary">
+            <i class="bi bi-hospital fs-1 mb-2 d-block"></i>
+            <h6 class="fw-bold mb-1">Need Urgent Care?</h6>
+            <p class="small text-muted mb-3">If you are experiencing a life-threatening medical emergency, please contact our 24/7 hotline directly.</p>
+            <a href="tel:+18005552273" class="btn btn-danger btn-sm">
+              <i class="bi bi-telephone-fill me-1"></i> Emergency: +1 (800) 555-CARE
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const deptSelect = document.getElementById('id_department');
+  const doctorSelect = document.getElementById('id_doctor');
+  const dateInput = document.getElementById('id_appointment_date');
+  const timeSelect = document.getElementById('id_appointment_time');
+  const slotHelp = document.getElementById('slotStatusHelp');
+
+  // Dynamic doctor filter by department
+  if (deptSelect && doctorSelect) {
+    deptSelect.addEventListener('change', function() {
+      const deptId = this.value;
+      fetch(`{% url 'doctors:api_doctors_by_department' %}?department_id=${deptId}`)
+        .then(res => res.json())
+        .then(data => {
+          doctorSelect.innerHTML = '<option value="">-- Select Doctor --</option>';
+          data.doctors.forEach(doc => {
+            const opt = document.createElement('option');
+            opt.value = doc.id;
+            opt.textContent = `${doc.name} (${doc.specialization} - $${doc.consultation_fee})`;
+            doctorSelect.appendChild(opt);
+          });
+        })
+        .catch(err => console.error("Error loading doctors:", err));
+    });
+  }
+
+  // Dynamic availability check for time slots
+  function checkSlots() {
+    const docId = doctorSelect.value;
+    const dateVal = dateInput.value;
+    if (!docId || !dateVal) return;
+
+    fetch(`{% url 'appointments:api_available_slots' %}?doctor_id=${docId}&date=${dateVal}`)
+      .then(res => res.json())
+      .then(data => {
+        let bookedCount = 0;
+        Array.from(timeSelect.options).forEach(opt => {
+          if (!opt.value) return;
+          const match = data.slots.find(s => s.value === opt.value);
+          if (match && match.is_booked) {
+            opt.disabled = true;
+            opt.textContent = opt.textContent.replace(' (Booked)', '') + ' (Booked)';
+            bookedCount++;
+          } else {
+            opt.disabled = false;
+            opt.textContent = opt.textContent.replace(' (Booked)', '');
+          }
+        });
+        slotHelp.textContent = `${bookedCount} slot(s) already booked on ${dateVal}. Available slots are selectable.`;
+      })
+      .catch(err => console.error("Error fetching slots:", err));
+  }
+
+  if (doctorSelect && dateInput && timeSelect) {
+    doctorSelect.addEventListener('change', checkSlots);
+    dateInput.addEventListener('change', checkSlots);
+    if (doctorSelect.value && dateInput.value) {
+      checkSlots();
+    }
+  }
+});
+</script>
+{% endblock %}

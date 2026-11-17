@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+
+{% block title %}Clinical Consultation - Smart Hospital{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-11">
+      
+      <!-- Patient Briefing Banner -->
+      <div class="card border-0 bg-primary text-white p-4 rounded-4 mb-4 shadow">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+          <div>
+            <span class="badge bg-white text-primary px-3 py-1 rounded-pill small fw-semibold mb-2">
+              <i class="bi bi-clipboard-pulse me-1"></i> Active Consultation Session
+            </span>
+            <h3 class="fw-bold mb-1">Patient: {{ appointment.patient.display_name }}</h3>
+            <div class="text-white-50 small">
+              {{ appointment.patient.gender }} &bull; Age: {{ appointment.patient.age|default:"N/A" }} &bull; 
+              Blood Group: <strong class="text-white">{{ appointment.patient.blood_group|default:"N/A" }}</strong> &bull; 
+              Phone: {{ appointment.patient.phone|default:"-" }}
+            </div>
+          </div>
+          <div class="text-md-end mt-3 mt-md-0">
+            <span class="badge bg-light text-dark fs-6">Appointment #{{ appointment.id }}</span>
+            <div class="small text-white-50 mt-1">{{ appointment.appointment_date|date:"M d, Y" }} at {{ appointment.appointment_time|time:"g:i A" }}</div>
+          </div>
+        </div>
+
+        {% if appointment.patient.medical_history %}
+          <div class="mt-3 p-3 bg-white bg-opacity-10 rounded-3 small">
+            <strong><i class="bi bi-exclamation-triangle-fill text-warning me-1"></i> Pre-existing Health Profile / Allergies:</strong>
+            {{ appointment.patient.medical_history }}
+          </div>
+        {% endif %}
+
+        <div class="mt-2 small text-white-50">
+          <strong>Chief Complaint:</strong> {{ appointment.reason }}
+        </div>
+      </div>
+
+      <form method="post" id="consultationForm">
+        {% csrf_token %}
+
+        <!-- Diagnosis & Treatment Plan Card -->
+        <div class="card card-custom p-4 p-md-5 mb-4 shadow-sm">
+          <div class="d-flex align-items-center mb-4">
+            <div class="navbar-brand-icon me-3">
+              <i class="bi bi-file-medical-fill"></i>
+            </div>
+            <div>
+              <h4 class="fw-bold mb-0">1. Diagnosis & Clinical Assessment</h4>
+              <p class="text-muted small mb-0">Record formal diagnosis, reported symptoms, and therapy plan</p>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-12">
+              <label for="id_diagnosis" class="form-label fw-semibold">Clinical Diagnosis <span class="text-danger">*</span></label>
+              {{ record_form.diagnosis }}
+              {% if record_form.diagnosis.errors %}<div class="text-danger small">{{ record_form.diagnosis.errors.0 }}</div>{% endif %}
+            </div>
+
+            <div class="col-md-6">
+              <label for="id_symptoms" class="form-label fw-semibold">Observed / Reported Symptoms <span class="text-danger">*</span></label>
+              {{ record_form.symptoms }}
+              {% if record_form.symptoms.errors %}<div class="text-danger small">{{ record_form.symptoms.errors.0 }}</div>{% endif %}
+            </div>
+
+            <div class="col-md-6">
+              <label for="id_treatment" class="form-label fw-semibold">Treatment / Therapy Plan <span class="text-danger">*</span></label>
+              {{ record_form.treatment }}
+              {% if record_form.treatment.errors %}<div class="text-danger small">{{ record_form.treatment.errors.0 }}</div>{% endif %}
+            </div>
+
+            <div class="col-md-8">
+              <label for="id_notes" class="form-label fw-semibold">Additional Clinical Notes (Optional)</label>
+              {{ record_form.notes }}
+            </div>
+
+            <div class="col-md-4">
+              <label for="id_follow_up_date" class="form-label fw-semibold">Recommended Follow-up Date</label>
+              {{ record_form.follow_up_date }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Digital Prescription Card -->
+        <div class="card card-custom p-4 p-md-5 mb-4 shadow-sm border-start border-4 border-success">
+          <div class="d-flex align-items-center justify-content-between mb-4">
+            <div class="d-flex align-items-center">
+              <div class="stat-icon-wrapper bg-success-subtle text-success me-3">
+                <i class="bi bi-prescription2 fs-3"></i>
+              </div>
+              <div>
+                <h4 class="fw-bold mb-0">2. Electronic Prescription (Rx)</h4>
+                <p class="text-muted small mb-0">Prescribe medications with dosages, schedules, and duration</p>
+              </div>
+            </div>
+            <button type="button" class="btn btn-outline-success btn-sm fw-semibold" id="addMedicineBtn">
+              <i class="bi bi-plus-circle me-1"></i> Add Medication
+            </button>
+          </div>
+
+          {{ medicine_formset.management_form }}
+
+          <div class="table-responsive mb-4">
+            <table class="table table-bordered align-middle" id="medicineTable">
+              <thead class="table-light small">
+                <tr>
+                  <th style="width: 25%;">Medicine Name <span class="text-danger">*</span></th>
+                  <th style="width: 18%;">Dosage</th>
+                  <th style="width: 18%;">Frequency</th>
+                  <th style="width: 15%;">Duration</th>
+                  <th style="width: 20%;">Instructions</th>
+                  <th style="width: 4%;"></th>
+                </tr>
+              </thead>
+              <tbody id="medicineTableBody">
+                {% for m_form in medicine_formset %}
+                  <tr class="medicine-row">
+                    <td>
+                      {{ m_form.id }}
+                      {{ m_form.medicine_name }}
+                      {% if m_form.medicine_name.errors %}<div class="text-danger small">{{ m_form.medicine_name.errors.0 }}</div>{% endif %}
+                    </td>
+                    <td>{{ m_form.dosage }}</td>
+                    <td>{{ m_form.frequency }}</td>
+                    <td>{{ m_form.duration }}</td>
+                    <td>{{ m_form.instructions }}</td>
+                    <td class="text-center">
+                      {% if m_form.instance.pk %}
+                        {{ m_form.DELETE }}
+                      {% else %}
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-row-btn" title="Remove">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="mb-3">
+            <label for="id_notes_rx" class="form-label fw-semibold">General Dietary Advice / Precaution Notes</label>
+            {{ prescription_form.notes }}
+            <div class="form-text small">e.g. Drink plenty of fluids, avoid heavy physical exertion, take antibiotics with plenty of water.</div>
+          </div>
+        </div>
+
+        <!-- Submit & Complete Consultation -->
+        <div class="card card-custom p-4 text-end bg-light border">
+          <div class="d-flex justify-content-between align-items-center">
+            <a href="{% url 'appointments:appointment_detail' appointment.id %}" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-left me-1"></i> Back to Appointment
+            </a>
+            <button type="submit" class="btn btn-success btn-lg px-4 fw-bold shadow">
+              <i class="bi bi-check2-circle me-2"></i> Complete Consultation & Issue Prescription
+            </button>
+          </div>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const addBtn = document.getElementById('addMedicineBtn');
+  const tableBody = document.getElementById('medicineTableBody');
+  const totalForms = document.getElementById('id_medicines-TOTAL_FORMS');
+
+  if (addBtn && tableBody && totalForms) {
+    addBtn.addEventListener('click', function() {
+      let currentFormCount = parseInt(totalForms.value);
+      const rows = tableBody.getElementsByClassName('medicine-row');
+      if (rows.length === 0) return;
+
+      const newRow = rows[0].cloneNode(true);
+      // Update form index in input attributes
+      const regex = new RegExp(`medicines-0-`, 'g');
+      newRow.innerHTML = newRow.innerHTML.replace(regex, `medicines-${currentFormCount}-`);
+
+      // Clear values in cloned inputs
+      Array.from(newRow.querySelectorAll('input')).forEach(input => {
+        if (input.type !== 'hidden') {
+          input.value = '';
+        } else if (input.name.endsWith('-id')) {
+          input.value = '';
+        }
+      });
+
+      tableBody.appendChild(newRow);
+      totalForms.value = currentFormCount + 1;
+    });
+
+    tableBody.addEventListener('click', function(e) {
+      if (e.target.closest('.remove-row-btn')) {
+        const row = e.target.closest('.medicine-row');
+        const rows = tableBody.getElementsByClassName('medicine-row');
+        if (rows.length > 1) {
+          row.remove();
+        } else {
+          // Just clear values if only 1 row
+          Array.from(row.querySelectorAll('input')).forEach(i => i.value = '');
+        }
+      }
+    });
+  }
+});
+</script>
+{% endblock %}

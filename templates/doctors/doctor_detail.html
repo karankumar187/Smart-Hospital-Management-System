@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ doctor.display_name }} - Smart Hospital{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'doctors:doctor_list' %}">Doctors</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ doctor.display_name }}</li>
+    </ol>
+  </nav>
+
+  <div class="row g-4">
+    <!-- Doctor Profile Summary Card -->
+    <div class="col-lg-4">
+      <div class="card card-custom p-4 text-center">
+        <div class="mx-auto mb-3" style="width: 110px; height: 110px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 3.5rem;">
+          <i class="bi bi-person-fill"></i>
+        </div>
+        <h3 class="fw-bold mb-1">{{ doctor.display_name }}</h3>
+        <span class="badge bg-primary-subtle text-primary px-3 py-2 fs-6 mb-3">{{ doctor.specialization }}</span>
+        
+        <div class="border-top pt-3 text-start small">
+          <p class="mb-2"><i class="bi bi-hospital text-primary me-2"></i><strong>Department:</strong> {{ doctor.department.name|default:"General Medicine" }}</p>
+          <p class="mb-2"><i class="bi bi-mortarboard text-primary me-2"></i><strong>Qualification:</strong> {{ doctor.qualification }}</p>
+          <p class="mb-2"><i class="bi bi-clock-history text-primary me-2"></i><strong>Experience:</strong> {{ doctor.experience_years }} Years</p>
+          <p class="mb-2"><i class="bi bi-cash text-primary me-2"></i><strong>Consultation Fee:</strong> ${{ doctor.consultation_fee }}</p>
+          <p class="mb-2"><i class="bi bi-door-open text-primary me-2"></i><strong>Room Number:</strong> {{ doctor.room_number|default:"Consultation Room 1" }}</p>
+          <p class="mb-0">
+            <i class="bi bi-circle-fill {% if doctor.is_available %}text-success{% else %}text-danger{% endif %} me-2"></i>
+            <strong>Status:</strong> {% if doctor.is_available %}Available for Appointments{% else %}Currently Unavailable{% endif %}
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <a href="{% url 'appointments:book_appointment' %}?doctor={{ doctor.id }}" class="btn btn-primary w-100 py-2 fw-semibold">
+            <i class="bi bi-calendar-plus me-1"></i> Book Consultation
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Doctor Biography & Working Hours Details -->
+    <div class="col-lg-8">
+      <div class="card card-custom p-4 mb-4">
+        <h4 class="fw-bold text-primary mb-3"><i class="bi bi-info-circle me-2"></i> About {{ doctor.display_name }}</h4>
+        <p class="text-muted leading-relaxed">
+          {{ doctor.bio|default:"Dedicated medical specialist committed to providing world-class diagnostic evaluation, evidence-based treatments, and patient-centered compassionate healthcare."|linebreaks }}
+        </p>
+
+        <h5 class="fw-bold text-dark mt-4 mb-3"><i class="bi bi-calendar3 me-2 text-primary"></i> Consultation Schedule & Availability</h5>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="p-3 bg-light rounded-3 border">
+              <span class="text-muted small d-block">Available Days</span>
+              <strong class="text-dark">{{ doctor.working_days }}</strong>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-3 bg-light rounded-3 border">
+              <span class="text-muted small d-block">Clinic Hours</span>
+              <strong class="text-dark">{{ doctor.working_hours_start|time:"g:i A" }} - {{ doctor.working_hours_end|time:"g:i A" }}</strong>
+            </div>
+          </div>
+        </div>
+
+        {% if doctor.department %}
+          <div class="mt-4 pt-3 border-top">
+            <h5 class="fw-bold text-dark mb-2"><i class="bi bi-hospital me-2 text-primary"></i> Department Overview</h5>
+            <p class="text-muted small mb-0">{{ doctor.department.description }}</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

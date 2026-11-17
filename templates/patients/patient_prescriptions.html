@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}My Prescriptions - Smart Hospital{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-1"><i class="bi bi-prescription2 text-success me-2"></i> My Prescriptions</h2>
+      <p class="text-muted mb-0">Official digital prescriptions issued by your attending physicians</p>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    {% for rx in prescriptions %}
+      <div class="col-lg-6">
+        <div class="card card-custom p-4 h-100 border-start border-4 border-success">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <div class="rx-symbol mb-1" style="font-size: 1.6rem; line-height: 1;">℞</div>
+              <h5 class="fw-bold text-dark mb-0">{{ rx.doctor.display_name }}</h5>
+              <div class="small text-muted">{{ rx.doctor.specialization }} &bull; {{ rx.doctor.department.name|default:"General" }}</div>
+            </div>
+            <div class="text-end">
+              <span class="badge bg-success-subtle text-success mb-1">Prescription #{{ rx.id }}</span>
+              <div class="small text-muted">{{ rx.created_at|date:"M d, Y" }}</div>
+            </div>
+          </div>
+
+          <!-- Medications List -->
+          <h6 class="fw-semibold text-secondary small text-uppercase mb-2">Prescribed Medications:</h6>
+          <div class="table-responsive mb-3">
+            <table class="table table-sm table-bordered align-middle small mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Medicine</th>
+                  <th>Dosage</th>
+                  <th>Frequency</th>
+                  <th>Duration</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for med in rx.medicines.all %}
+                  <tr>
+                    <td class="fw-semibold">{{ med.medicine_name }}</td>
+                    <td>{{ med.dosage }}</td>
+                    <td>{{ med.frequency }}</td>
+                    <td>{{ med.duration }}</td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td colspan="4" class="text-muted text-center">No specific medicines listed.</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          {% if rx.notes %}
+            <div class="p-2 bg-light rounded small text-muted mb-3">
+              <strong>Instructions:</strong> {{ rx.notes }}
+            </div>
+          {% endif %}
+
+          <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+            <a href="{% url 'records:prescription_print' rx.id %}" target="_blank" class="btn btn-sm btn-outline-dark">
+              <i class="bi bi-printer me-1"></i> Print / PDF
+            </a>
+            <a href="{% url 'records:prescription_detail' rx.id %}" class="btn btn-sm btn-success">
+              View Digital Prescription <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-12 text-center py-5 text-muted">
+        <i class="bi bi-capsule fs-1 text-muted d-block mb-2"></i>
+        No digital prescriptions found.
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

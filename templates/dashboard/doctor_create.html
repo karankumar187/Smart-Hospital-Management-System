@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}Register New Doctor - Admin Portal{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+      
+      <div class="card card-custom p-4 p-md-5 shadow-sm">
+        <div class="d-flex align-items-center mb-4">
+          <div class="navbar-brand-icon me-3">
+            <i class="bi bi-person-plus-fill"></i>
+          </div>
+          <div>
+            <h4 class="fw-bold mb-0">Add New Doctor Account</h4>
+            <p class="text-muted small mb-0">Create physician login credentials and clinic profile</p>
+          </div>
+        </div>
+
+        <form method="post">
+          {% csrf_token %}
+
+          <!-- Account Information -->
+          <h5 class="fw-bold text-primary border-bottom pb-2 mb-3">1. Login Credentials & Account</h5>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Username <span class="text-danger">*</span></label>
+              {{ form.username }}
+              {% if form.username.errors %}<div class="text-danger small">{{ form.username.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Password <span class="text-danger">*</span></label>
+              {{ form.password }}
+              {% if form.password.errors %}<div class="text-danger small">{{ form.password.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">First Name <span class="text-danger">*</span></label>
+              {{ form.first_name }}
+              {% if form.first_name.errors %}<div class="text-danger small">{{ form.first_name.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Last Name <span class="text-danger">*</span></label>
+              {{ form.last_name }}
+              {% if form.last_name.errors %}<div class="text-danger small">{{ form.last_name.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Email Address <span class="text-danger">*</span></label>
+              {{ form.email }}
+              {% if form.email.errors %}<div class="text-danger small">{{ form.email.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Phone Number</label>
+              {{ form.phone }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Assigned Department</label>
+              {{ form.department }}
+            </div>
+          </div>
+
+          <!-- Clinical Profile -->
+          <h5 class="fw-bold text-primary border-bottom pb-2 mb-3">2. Clinical Profile & Fees</h5>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Specialization <span class="text-danger">*</span></label>
+              {{ form.specialization }}
+              {% if form.specialization.errors %}<div class="text-danger small">{{ form.specialization.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Qualification <span class="text-danger">*</span></label>
+              {{ form.qualification }}
+              {% if form.qualification.errors %}<div class="text-danger small">{{ form.qualification.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Experience (Years)</label>
+              {{ form.experience_years }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Consultation Fee ($)</label>
+              {{ form.consultation_fee }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Room / Office</label>
+              {{ form.room_number }}
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold">Doctor Biography</label>
+              {{ form.bio }}
+            </div>
+          </div>
+
+          <!-- Schedule -->
+          <h5 class="fw-bold text-primary border-bottom pb-2 mb-3">3. Schedule & Availability</h5>
+          <div class="row g-3 mb-4">
+            <div class="col-12">
+              <label class="form-label fw-semibold">Working Days</label>
+              {{ form.working_days }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Shift Start Time</label>
+              {{ form.working_hours_start }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Shift End Time</label>
+              {{ form.working_hours_end }}
+            </div>
+            <div class="col-12">
+              <div class="form-check form-switch mt-2">
+                {{ form.is_available }}
+                <label class="form-check-label fw-semibold">Active & Available for Bookings</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between">
+            <a href="{% url 'dashboard:admin_doctors_list' %}" class="btn btn-outline-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary px-4 fw-semibold">
+              <i class="bi bi-check-lg me-1"></i> Create Doctor Account
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Find Doctors - Smart Hospital{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <!-- Header -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-1"><i class="bi bi-people-fill text-primary me-2"></i> Find a Specialist Doctor</h2>
+      <p class="text-muted mb-0">Browse our team of certified physicians and book your consultation</p>
+    </div>
+    {% if user.is_authenticated and user.is_patient_role %}
+      <a href="{% url 'appointments:book_appointment' %}" class="btn btn-primary mt-3 mt-md-0">
+        <i class="bi bi-calendar-plus me-1"></i> Book Appointment
+      </a>
+    {% endif %}
+  </div>
+
+  <!-- Search and Department Filter -->
+  <div class="card card-custom p-3 mb-4 shadow-sm">
+    <form method="get" class="row g-2 align-items-center">
+      <div class="col-md-5">
+        <div class="input-group">
+          <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+          <input type="text" name="search" class="form-control" placeholder="Search by doctor name or specialty..." value="{{ search_query }}">
+        </div>
+      </div>
+      <div class="col-md-5">
+        <select name="department" class="form-select">
+          <option value="">-- All Departments --</option>
+          {% for dept in departments %}
+            <option value="{{ dept.id }}" {% if selected_department == dept.id|stringformat:"s" %}selected{% endif %}>
+              {{ dept.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2 d-grid">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-funnel me-1"></i> Filter
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Doctors Grid -->
+  <div class="row g-4">
+    {% for doctor in doctors %}
+      <div class="col-lg-4 col-md-6">
+        <div class="card card-custom h-100 p-4">
+          <div class="d-flex align-items-start gap-3 mb-3">
+            <div style="width: 65px; height: 65px; min-width: 65px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 1.8rem;">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <div>
+              <h5 class="fw-bold mb-1">
+                <a href="{% url 'doctors:doctor_detail' doctor.id %}" class="text-dark text-decoration-none hover-primary">
+                  {{ doctor.display_name }}
+                </a>
+              </h5>
+              <span class="badge bg-primary-subtle text-primary">{{ doctor.specialization }}</span>
+              <div class="small text-muted mt-1">
+                <i class="bi bi-hospital me-1"></i> {{ doctor.department.name|default:"General Medicine" }}
+              </div>
+            </div>
+          </div>
+
+          <div class="small text-muted mb-3">
+            <div class="mb-1"><i class="bi bi-mortarboard me-2 text-primary"></i><strong>Qualification:</strong> {{ doctor.qualification }}</div>
+            <div class="mb-1"><i class="bi bi-clock-history me-2 text-primary"></i><strong>Experience:</strong> {{ doctor.experience_years }} years</div>
+            <div class="mb-1"><i class="bi bi-door-open me-2 text-primary"></i><strong>Room:</strong> {{ doctor.room_number|default:"Consultation Suite 1" }}</div>
+            <div><i class="bi bi-calendar-week me-2 text-primary"></i><strong>Days:</strong> {{ doctor.working_days }}</div>
+          </div>
+
+          <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+            <div>
+              <span class="text-muted small d-block">Consultation Fee</span>
+              <strong class="fs-5 text-dark">${{ doctor.consultation_fee }}</strong>
+            </div>
+            <div class="d-flex gap-2">
+              <a href="{% url 'doctors:doctor_detail' doctor.id %}" class="btn btn-outline-secondary btn-sm">
+                Details
+              </a>
+              <a href="{% url 'appointments:book_appointment' %}?doctor={{ doctor.id }}" class="btn btn-primary btn-sm">
+                <i class="bi bi-calendar-check me-1"></i> Book
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-12 text-center py-5">
+        <div class="mb-3 text-muted" style="font-size: 3rem;"><i class="bi bi-search"></i></div>
+        <h4 class="fw-bold text-muted">No doctors found matching your criteria</h4>
+        <p class="text-muted small">Try selecting another department or clearing search keywords.</p>
+        <a href="{% url 'doctors:doctor_list' %}" class="btn btn-outline-primary">Reset Filters</a>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

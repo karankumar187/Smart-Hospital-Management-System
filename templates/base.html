@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Smart Hospital Management System{% endblock %}</title>
+  
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <!-- Custom CSS -->
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-hospital sticky-top">
+    <div class="container-fluid px-lg-4">
+      <a class="navbar-brand d-flex align-items-center fw-bold text-primary" href="{% url 'home' %}">
+        <span class="navbar-brand-icon">
+          <i class="bi bi-heart-pulse-fill"></i>
+        </span>
+        <span>Smart<span class="text-dark">Hospital</span></span>
+      </a>
+      
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <!-- Center / Left Links -->
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}"><i class="bi bi-house me-1"></i> Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'doctors:doctor_list' %}"><i class="bi bi-people me-1"></i> Doctors</a>
+          </li>
+          
+          {% if user.is_authenticated %}
+            {% if user.is_patient_role %}
+              <li class="nav-item">
+                <a class="nav-link fw-semibold text-primary" href="{% url 'patients:patient_dashboard' %}">
+                  <i class="bi bi-speedometer2 me-1"></i> My Dashboard
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'appointments:book_appointment' %}">
+                  <i class="bi bi-calendar-plus me-1"></i> Book Appointment
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'patients:patient_appointments' %}">
+                  <i class="bi bi-calendar-check me-1"></i> Appointments
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'patients:patient_records' %}">
+                  <i class="bi bi-file-earmark-medical me-1"></i> Medical Records
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'patients:patient_prescriptions' %}">
+                  <i class="bi bi-prescription2 me-1"></i> Prescriptions
+                </a>
+              </li>
+            {% elif user.is_doctor_role %}
+              <li class="nav-item">
+                <a class="nav-link fw-semibold text-primary" href="{% url 'doctors:doctor_dashboard' %}">
+                  <i class="bi bi-speedometer2 me-1"></i> Doctor Dashboard
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'doctors:doctor_appointments' %}">
+                  <i class="bi bi-calendar3 me-1"></i> My Appointments
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'doctors:doctor_patients' %}">
+                  <i class="bi bi-person-lines-fill me-1"></i> My Patients
+                </a>
+              </li>
+            {% elif user.is_admin_role %}
+              <li class="nav-item">
+                <a class="nav-link fw-semibold text-primary" href="{% url 'dashboard:admin_dashboard' %}">
+                  <i class="bi bi-speedometer2 me-1"></i> Admin Dashboard
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'dashboard:admin_doctors_list' %}">
+                  <i class="bi bi-person-badge me-1"></i> Doctors
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'dashboard:admin_patients_list' %}">
+                  <i class="bi bi-people me-1"></i> Patients
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'dashboard:admin_departments_list' %}">
+                  <i class="bi bi-hospital me-1"></i> Departments
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'dashboard:admin_appointments' %}">
+                  <i class="bi bi-calendar-event me-1"></i> Appointments
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'dashboard:admin_records' %}">
+                  <i class="bi bi-folder2-open me-1"></i> Records
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-muted" href="/admin/" target="_blank">
+                  <i class="bi bi-shield-lock me-1"></i> Django Admin
+                </a>
+              </li>
+            {% endif %}
+          {% endif %}
+        </ul>
+
+        <!-- Right Side User Authentication / Action Buttons -->
+        <div class="d-flex align-items-center gap-2">
+          {% if user.is_authenticated %}
+            <div class="dropdown">
+              <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2" type="button" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-circle fs-5 text-primary"></i>
+                <span class="d-none d-sm-inline">{{ user.get_full_name|default:user.username }}</span>
+                <span class="badge {{ user.get_role_display_badge }} ms-1">{{ user.get_role_display }}</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userMenuButton">
+                <li><h6 class="dropdown-header">Signed in as <strong>{{ user.username }}</strong></h6></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:dashboard_redirect' %}"><i class="bi bi-grid me-2 text-primary"></i> Dashboard</a></li>
+                {% if user.is_doctor_role %}
+                  <li><a class="dropdown-item" href="{% url 'doctors:doctor_profile' %}"><i class="bi bi-person-gear me-2"></i> Doctor Profile</a></li>
+                {% elif user.is_patient_role %}
+                  <li><a class="dropdown-item" href="{% url 'patients:patient_profile' %}"><i class="bi bi-person-lines-fill me-2"></i> Medical Profile</a></li>
+                {% endif %}
+                <li><a class="dropdown-item" href="{% url 'accounts:profile' %}"><i class="bi bi-gear me-2"></i> Account Settings</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}">
+                    <i class="bi bi-box-arrow-right me-2"></i> Log Out
+                  </a>
+                </li>
+              </ul>
+            </div>
+          {% else %}
+            <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary">
+              <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+            </a>
+            <a href="{% url 'accounts:register' %}" class="btn btn-primary">
+              <i class="bi bi-person-plus me-1"></i> Register as Patient
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Messages Container -->
+  {% if messages %}
+    <div class="container mt-3">
+      {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show shadow-sm" role="alert">
+          {% if message.tags == 'success' %}
+            <i class="bi bi-check-circle-fill me-2"></i>
+          {% elif message.tags == 'error' %}
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          {% elif message.tags == 'warning' %}
+            <i class="bi bi-exclamation-circle-fill me-2"></i>
+          {% else %}
+            <i class="bi bi-info-circle-fill me-2"></i>
+          {% endif %}
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Main Content Area -->
+  <main class="py-4">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Hospital Footer -->
+  <footer class="bg-dark text-white pt-5 pb-4 mt-auto no-print">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-4 col-md-6">
+          <div class="d-flex align-items-center mb-3">
+            <span class="navbar-brand-icon">
+              <i class="bi bi-heart-pulse-fill"></i>
+            </span>
+            <span class="fs-4 fw-bold">SmartHospital</span>
+          </div>
+          <p class="text-white-50">
+            A comprehensive web-based healthcare management platform developed with Django to automate and streamline hospital operations, clinical consultations, online appointments, and digital prescriptions.
+          </p>
+          <div class="d-flex gap-3 text-white-50">
+            <span class="badge bg-success"><i class="bi bi-shield-check me-1"></i> Role-Based RBAC</span>
+            <span class="badge bg-primary"><i class="bi bi-shield-lock me-1"></i> Secure Records</span>
+          </div>
+        </div>
+        
+        <div class="col-lg-2 col-md-6">
+          <h6 class="text-uppercase fw-bold text-white mb-3">Quick Links</h6>
+          <ul class="list-unstyled text-white-50">
+            <li class="mb-2"><a href="{% url 'home' %}" class="text-white-50 text-decoration-none">Home</a></li>
+            <li class="mb-2"><a href="{% url 'doctors:doctor_list' %}" class="text-white-50 text-decoration-none">Doctors</a></li>
+            <li class="mb-2"><a href="{% url 'accounts:login' %}" class="text-white-50 text-decoration-none">Sign In</a></li>
+            <li class="mb-2"><a href="{% url 'accounts:register' %}" class="text-white-50 text-decoration-none">Register Patient</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <h6 class="text-uppercase fw-bold text-white mb-3">Hospital Portals</h6>
+          <ul class="list-unstyled text-white-50">
+            <li class="mb-2"><a href="{% url 'accounts:login' %}" class="text-white-50 text-decoration-none"><i class="bi bi-person me-1"></i> Patient Portal</a></li>
+            <li class="mb-2"><a href="{% url 'accounts:login' %}" class="text-white-50 text-decoration-none"><i class="bi bi-heart-pulse me-1"></i> Doctor Portal</a></li>
+            <li class="mb-2"><a href="{% url 'accounts:login' %}" class="text-white-50 text-decoration-none"><i class="bi bi-speedometer2 me-1"></i> Admin Operations</a></li>
+            <li class="mb-2"><a href="/admin/" target="_blank" class="text-white-50 text-decoration-none"><i class="bi bi-gear me-1"></i> Backend Admin</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <h6 class="text-uppercase fw-bold text-white mb-3">Emergency Contact</h6>
+          <p class="text-white-50 mb-1"><i class="bi bi-telephone-fill text-danger me-2"></i> 24/7 Hotline: <strong>+1 (800) 555-CARE</strong></p>
+          <p class="text-white-50 mb-1"><i class="bi bi-envelope-fill me-2"></i> support@smarthospital.org</p>
+          <p class="text-white-50 mb-3"><i class="bi bi-geo-alt-fill me-2"></i> 100 Health Sciences Way, Metro Medical District</p>
+          <span class="badge bg-danger p-2"><i class="bi bi-hospital me-1"></i> Emergency Department Open 24/7</span>
+        </div>
+      </div>
+      <hr class="border-secondary my-4">
+      <div class="row align-items-center text-white-50 small">
+        <div class="col-md-6 text-center text-md-start">
+          &copy; 2026 Smart Hospital Management System. All rights reserved.
+        </div>
+        <div class="col-md-6 text-center text-md-end">
+          Built with Python, Django 4.2 & Bootstrap 5
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap 5 Bundle JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

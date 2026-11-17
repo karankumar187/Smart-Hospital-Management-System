@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Medical Record #{{ record.id }} - Smart Hospital{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+      
+      <div class="card card-custom p-4 p-md-5 shadow-sm">
+        <!-- Header -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom pb-4 mb-4">
+          <div>
+            <span class="badge bg-primary-subtle text-primary fs-6 mb-2">Clinical Consultation Record</span>
+            <h3 class="fw-bold mb-0">Record #{{ record.id }}</h3>
+            <span class="text-muted small">Consultation Date: {{ record.created_at|date:"l, F d, Y at g:i A" }}</span>
+          </div>
+          {% if has_prescription %}
+            <div class="mt-3 mt-md-0">
+              <a href="{% url 'records:prescription_detail' record.prescription.id %}" class="btn btn-success fw-semibold">
+                <i class="bi bi-prescription2 me-1"></i> View Prescription
+              </a>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Metadata Cards: Patient & Attending Physician -->
+        <div class="row g-4 mb-4">
+          <div class="col-md-6">
+            <div class="p-3 bg-light rounded-3 border h-100">
+              <h6 class="fw-bold text-primary mb-2"><i class="bi bi-person me-1"></i> Patient</h6>
+              <div class="fw-bold fs-5">{{ record.patient.display_name }}</div>
+              <div class="small text-muted">{{ record.patient.gender }} &bull; Age: {{ record.patient.age|default:"N/A" }}</div>
+              <div class="small text-muted"><i class="bi bi-droplet-fill text-danger me-1"></i> Blood Group: {{ record.patient.blood_group|default:"N/A" }}</div>
+              <div class="small text-muted"><i class="bi bi-telephone me-1"></i> Phone: {{ record.patient.phone|default:"-" }}</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-3 bg-light rounded-3 border h-100">
+              <h6 class="fw-bold text-primary mb-2"><i class="bi bi-person-badge me-1"></i> Attending Physician</h6>
+              <div class="fw-bold fs-5">{{ record.doctor.display_name }}</div>
+              <div class="small text-muted">{{ record.doctor.specialization }}</div>
+              <div class="small text-muted"><i class="bi bi-hospital me-1"></i> {{ record.doctor.department.name|default:"General Medicine" }}</div>
+              <div class="small text-muted"><i class="bi bi-award me-1"></i> {{ record.doctor.qualification }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clinical Findings -->
+        <div class="mb-4">
+          <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">
+            <i class="bi bi-clipboard2-pulse text-primary me-2"></i> Clinical Assessment & Diagnosis
+          </h5>
+          <div class="mb-3">
+            <label class="fw-semibold text-secondary small text-uppercase">Primary Diagnosis:</label>
+            <div class="p-3 bg-primary-subtle text-primary rounded-3 fw-bold fs-5">
+              {{ record.diagnosis }}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="fw-semibold text-secondary small text-uppercase">Presented Symptoms:</label>
+            <div class="p-3 bg-light rounded-3 text-dark border">
+              {{ record.symptoms|linebreaks }}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="fw-semibold text-secondary small text-uppercase">Recommended Treatment & Therapy:</label>
+            <div class="p-3 bg-light rounded-3 text-dark border">
+              {{ record.treatment|linebreaks }}
+            </div>
+          </div>
+
+          {% if record.notes %}
+            <div class="mb-3">
+              <label class="fw-semibold text-secondary small text-uppercase">Doctor's Clinical Notes:</label>
+              <div class="p-3 bg-light rounded-3 text-dark border">
+                {{ record.notes|linebreaks }}
+              </div>
+            </div>
+          {% endif %}
+
+          {% if record.follow_up_date %}
+            <div class="p-3 bg-info-subtle text-dark rounded-3 border border-info-subtle d-flex align-items-center">
+              <i class="bi bi-calendar-event-fill text-info fs-4 me-3"></i>
+              <div>
+                <strong>Recommended Follow-up Visit:</strong>
+                <div class="text-primary fw-bold">{{ record.follow_up_date|date:"l, F d, Y" }}</div>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Back & Navigation -->
+        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+          <a href="{% url 'accounts:dashboard_redirect' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+          </a>
+          {% if has_prescription %}
+            <a href="{% url 'records:prescription_print' record.prescription.id %}" target="_blank" class="btn btn-outline-dark">
+              <i class="bi bi-printer me-1"></i> Print Attached Prescription
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

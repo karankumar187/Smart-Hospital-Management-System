@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}Doctor Appointments - Smart Hospital{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-1"><i class="bi bi-calendar3 text-primary me-2"></i> Patient Appointments</h2>
+      <p class="text-muted mb-0">Manage your clinical consultations, approvals, and schedules</p>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="card card-custom p-3 mb-4 shadow-sm">
+    <form method="get" class="row g-2 align-items-center">
+      <div class="col-md-5">
+        <label class="form-label small fw-semibold mb-1">Filter by Status</label>
+        <select name="status" class="form-select">
+          <option value="">-- All Statuses --</option>
+          {% for val, label in status_choices %}
+            <option value="{{ val }}" {% if status_filter == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-5">
+        <label class="form-label small fw-semibold mb-1">Filter by Date</label>
+        <input type="date" name="date" class="form-control" value="{{ date_filter }}">
+      </div>
+      <div class="col-md-2 d-grid align-self-end">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-funnel me-1"></i> Filter
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Table -->
+  <div class="card card-custom p-4 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>Date & Time</th>
+            <th>Patient</th>
+            <th>Contact</th>
+            <th>Reason / Symptoms</th>
+            <th>Status</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for appt in appointments %}
+            <tr>
+              <td class="text-muted small">#{{ appt.id }}</td>
+              <td>
+                <div class="fw-semibold">{{ appt.appointment_date|date:"M d, Y" }}</div>
+                <div class="small text-muted">{{ appt.appointment_time|time:"g:i A" }}</div>
+              </td>
+              <td>
+                <div class="fw-bold">{{ appt.patient.display_name }}</div>
+                <span class="small text-muted">{{ appt.patient.gender }} &bull; Age: {{ appt.patient.age|default:"N/A" }}</span>
+              </td>
+              <td class="small">
+                <div><i class="bi bi-telephone me-1 text-muted"></i>{{ appt.patient.phone|default:"-" }}</div>
+                <div><i class="bi bi-envelope me-1 text-muted"></i>{{ appt.patient.email|default:"-" }}</div>
+              </td>
+              <td class="small text-muted" style="max-width: 200px;">
+                {{ appt.reason|truncatechars:45 }}
+              </td>
+              <td>
+                <span class="badge {{ appt.get_status_badge }}">{{ appt.status }}</span>
+              </td>
+              <td class="text-end text-nowrap">
+                {% if appt.status == 'Confirmed' %}
+                  <a href="{% url 'records:create_consultation_record' appt.id %}" class="btn btn-sm btn-success" title="Consult & Create Prescription">
+                    <i class="bi bi-clipboard-pulse me-1"></i> Consult
+                  </a>
+                {% elif appt.status == 'Pending' %}
+                  <a href="{% url 'appointments:update_appointment_status' appt.id %}?status=Confirmed" class="btn btn-sm btn-primary" title="Confirm">
+                    <i class="bi bi-check-lg"></i>
+                  </a>
+                  <a href="{% url 'appointments:update_appointment_status' appt.id %}?status=Rejected" class="btn btn-sm btn-outline-danger" title="Reject">
+                    <i class="bi bi-x-lg"></i>
+                  </a>
+                {% elif appt.status == 'Completed' and appt.medical_record %}
+                  <a href="{% url 'records:medical_record_detail' appt.medical_record.id %}" class="btn btn-sm btn-outline-info" title="View Medical Record">
+                    <i class="bi bi-file-medical"></i> Record
+                  </a>
+                {% endif %}
+                <a href="{% url 'appointments:appointment_detail' appt.id %}" class="btn btn-sm btn-light border" title="View Details">
+                  <i class="bi bi-eye"></i>
+                </a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="7" class="text-center py-5 text-muted">
+                <i class="bi bi-calendar2-x fs-1 text-muted d-block mb-2"></i>
+                No appointments found matching your filters.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}Prescription #{{ prescription.id }} - Smart Hospital{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+      
+      <!-- Top Action Bar -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="{% url 'accounts:dashboard_redirect' %}" class="btn btn-outline-secondary">
+          <i class="bi bi-arrow-left me-1"></i> Dashboard
+        </a>
+        <div class="d-flex gap-2">
+          <a href="{% url 'records:prescription_print' prescription.id %}" target="_blank" class="btn btn-primary fw-semibold">
+            <i class="bi bi-printer me-1"></i> Print / Save as PDF
+          </a>
+        </div>
+      </div>
+
+      <!-- Prescription Card Layout -->
+      <div class="card card-custom p-4 p-md-5 shadow-sm border-top border-4 border-primary">
+        
+        <!-- Hospital Branding & Rx Header -->
+        <div class="row align-items-center border-bottom pb-4 mb-4">
+          <div class="col-md-7">
+            <div class="d-flex align-items-center mb-2">
+              <span class="navbar-brand-icon">
+                <i class="bi bi-heart-pulse-fill"></i>
+              </span>
+              <div>
+                <h3 class="fw-bold mb-0 text-primary">SmartHospital</h3>
+                <span class="small text-muted">Advanced Digital Healthcare & Multi-Specialty Clinic</span>
+              </div>
+            </div>
+            <p class="small text-muted mb-0">
+              100 Health Sciences Way, Metro Medical District &bull; Phone: +1 (800) 555-CARE
+            </p>
+          </div>
+          <div class="col-md-5 text-md-end mt-3 mt-md-0">
+            <div class="badge bg-primary fs-6 px-3 py-2 mb-1">Prescription #{{ prescription.id }}</div>
+            <div class="small text-muted">Date: <strong>{{ prescription.created_at|date:"M d, Y" }}</strong></div>
+          </div>
+        </div>
+
+        <!-- Doctor & Patient Details -->
+        <div class="row g-3 mb-4 pb-3 border-bottom">
+          <div class="col-md-6 border-end">
+            <h6 class="text-uppercase fw-bold text-muted small">Doctor:</h6>
+            <h5 class="fw-bold text-dark mb-0">{{ prescription.doctor.display_name }}</h5>
+            <div class="small text-muted">{{ prescription.doctor.specialization }} &bull; {{ prescription.doctor.qualification }}</div>
+            <div class="small text-muted">{{ prescription.doctor.department.name|default:"General Medicine" }}</div>
+          </div>
+          <div class="col-md-6 ps-md-4">
+            <h6 class="text-uppercase fw-bold text-muted small">Patient:</h6>
+            <h5 class="fw-bold text-dark mb-0">{{ prescription.patient.display_name }}</h5>
+            <div class="small text-muted">Gender: {{ prescription.patient.gender }} &bull; Age: {{ prescription.patient.age|default:"N/A" }} &bull; Blood: {{ prescription.patient.blood_group|default:"N/A" }}</div>
+            <div class="small text-muted">Phone: {{ prescription.patient.phone|default:"-" }}</div>
+          </div>
+        </div>
+
+        <!-- Rx Body -->
+        <div class="d-flex align-items-center mb-3">
+          <span class="rx-symbol me-3">℞</span>
+          <h5 class="fw-bold text-dark mb-0">Prescribed Medications</h5>
+        </div>
+
+        <div class="table-responsive mb-4">
+          <table class="table table-bordered align-middle">
+            <thead class="table-light small">
+              <tr>
+                <th style="width: 5%;">#</th>
+                <th style="width: 30%;">Medication</th>
+                <th style="width: 15%;">Dosage</th>
+                <th style="width: 20%;">Frequency</th>
+                <th style="width: 15%;">Duration</th>
+                <th style="width: 15%;">Instructions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for med in medicines %}
+                <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td><strong>{{ med.medicine_name }}</strong></td>
+                  <td>{{ med.dosage }}</td>
+                  <td><span class="badge bg-light text-dark border">{{ med.frequency }}</span></td>
+                  <td>{{ med.duration }}</td>
+                  <td class="small text-muted">{{ med.instructions|default:"As directed" }}</td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="6" class="text-center py-3 text-muted">No medications recorded.</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Special Advice / Precautions -->
+        {% if prescription.notes %}
+          <div class="p-3 bg-light rounded-3 border mb-4">
+            <h6 class="fw-bold text-dark mb-1"><i class="bi bi-info-circle text-primary me-1"></i> Physician Advice & Instructions:</h6>
+            <div class="small text-muted">{{ prescription.notes|linebreaks }}</div>
+          </div>
+        {% endif %}
+
+        <!-- Follow-up notice -->
+        {% if prescription.medical_record.follow_up_date %}
+          <div class="small text-primary mb-4">
+            <i class="bi bi-calendar-check me-1"></i> <strong>Follow-up Scheduled:</strong> {{ prescription.medical_record.follow_up_date|date:"l, F d, Y" }}
+          </div>
+        {% endif %}
+
+        <!-- Doctor Signature Area -->
+        <div class="row pt-4 mt-4 border-top">
+          <div class="col-6 small text-muted">
+            <div class="fst-italic">Generated digitally via Smart Hospital EMR System</div>
+            <div>Valid with licensed clinical practitioner seal</div>
+          </div>
+          <div class="col-6 text-end">
+            <div class="mb-4">___________________________</div>
+            <div class="fw-bold">{{ prescription.doctor.display_name }}</div>
+            <div class="small text-muted">{{ prescription.doctor.qualification }}</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ patient.display_name }} - Clinical History{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'doctors:doctor_dashboard' %}">Dashboard</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'doctors:doctor_patients' %}">Assigned Patients</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ patient.display_name }}</li>
+    </ol>
+  </nav>
+
+  <div class="row g-4">
+    <!-- Patient Medical Profile Summary -->
+    <div class="col-lg-4">
+      <div class="card card-custom p-4 mb-4">
+        <div class="text-center mb-3">
+          <div class="mx-auto mb-2" style="width: 80px; height: 80px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 2.2rem;">
+            <i class="bi bi-person-fill"></i>
+          </div>
+          <h4 class="fw-bold mb-0">{{ patient.display_name }}</h4>
+          <span class="badge bg-secondary-subtle text-dark">{{ patient.gender }} &bull; Age: {{ patient.age|default:"N/A" }}</span>
+          {% if patient.blood_group %}
+            <span class="badge bg-danger-subtle text-danger">{{ patient.blood_group }}</span>
+          {% endif %}
+        </div>
+
+        <div class="border-top pt-3 small">
+          <p class="mb-2"><i class="bi bi-telephone text-primary me-2"></i><strong>Phone:</strong> {{ patient.phone|default:"-" }}</p>
+          <p class="mb-2"><i class="bi bi-envelope text-primary me-2"></i><strong>Email:</strong> {{ patient.email|default:"-" }}</p>
+          <p class="mb-2"><i class="bi bi-calendar text-primary me-2"></i><strong>DOB:</strong> {{ patient.dob|default:"Not specified" }}</p>
+          <p class="mb-2"><i class="bi bi-geo-alt text-primary me-2"></i><strong>Address:</strong> {{ patient.address|default:"Not provided" }}</p>
+          <p class="mb-2"><i class="bi bi-person-exclamation text-danger me-2"></i><strong>Emergency:</strong> {{ patient.emergency_contact_name }} ({{ patient.emergency_contact_phone }})</p>
+          
+          <div class="p-3 bg-light rounded-3 mt-3 border">
+            <strong class="text-dark d-block mb-1"><i class="bi bi-exclamation-triangle text-warning me-1"></i> Medical History / Background:</strong>
+            <span class="text-muted">{{ patient.medical_history|default:"No pre-existing chronic conditions or allergies recorded." }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Consultations & Medical Records -->
+    <div class="col-lg-8">
+      <div class="card card-custom p-4 mb-4">
+        <h5 class="fw-bold text-primary mb-3"><i class="bi bi-file-earmark-medical me-2"></i> Clinical Records & Consultations</h5>
+        
+        {% if medical_records %}
+          <div class="accordion" id="recordsAccordion">
+            {% for rec in medical_records %}
+              <div class="accordion-item mb-2 border rounded-3 overflow-hidden">
+                <h2 class="accordion-header" id="heading{{ rec.id }}">
+                  <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ rec.id }}" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}">
+                    <div class="d-flex justify-content-between align-items-center w-100 me-3">
+                      <div>
+                        <strong>{{ rec.diagnosis }}</strong>
+                        <span class="text-muted small ms-2">&bull; {{ rec.created_at|date:"M d, Y" }}</span>
+                      </div>
+                      {% if rec.has_prescription %}
+                        <span class="badge bg-success-subtle text-success small"><i class="bi bi-prescription2 me-1"></i> Rx Attached</span>
+                      {% endif %}
+                    </div>
+                  </button>
+                </h2>
+                <div id="collapse{{ rec.id }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" data-bs-parent="#recordsAccordion">
+                  <div class="accordion-body bg-light">
+                    <div class="mb-2"><strong>Symptoms:</strong> <span class="text-muted">{{ rec.symptoms }}</span></div>
+                    <div class="mb-2"><strong>Treatment Plan:</strong> <span class="text-muted">{{ rec.treatment }}</span></div>
+                    {% if rec.notes %}
+                      <div class="mb-2"><strong>Clinical Notes:</strong> <span class="text-muted">{{ rec.notes }}</span></div>
+                    {% endif %}
+                    {% if rec.follow_up_date %}
+                      <div class="mb-2 text-primary"><strong>Follow-Up Date:</strong> {{ rec.follow_up_date|date:"M d, Y" }}</div>
+                    {% endif %}
+                    <div class="d-flex gap-2 mt-3 pt-2 border-top">
+                      <a href="{% url 'records:medical_record_detail' rec.id %}" class="btn btn-sm btn-outline-primary">
+                        View Full Record
+                      </a>
+                      {% if rec.has_prescription %}
+                        <a href="{% url 'records:prescription_detail' rec.prescription.id %}" class="btn btn-sm btn-success">
+                          <i class="bi bi-printer me-1"></i> View Prescription
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-center py-4 text-muted">
+            <i class="bi bi-clipboard-x fs-2 d-block mb-1"></i>
+            No clinical records created yet for this patient.
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Past Appointments -->
+      <div class="card card-custom p-4">
+        <h5 class="fw-bold mb-3"><i class="bi bi-clock-history me-2 text-primary"></i> Appointment History</h5>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle small mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Date & Time</th>
+                <th>Reason</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for appt in appointments %}
+                <tr>
+                  <td>
+                    <strong>{{ appt.appointment_date|date:"M d, Y" }}</strong>
+                    <div class="text-muted">{{ appt.appointment_time|time:"g:i A" }}</div>
+                  </td>
+                  <td>{{ appt.reason|truncatechars:40 }}</td>
+                  <td><span class="badge {{ appt.get_status_badge }}">{{ appt.status }}</span></td>
+                  <td>
+                    <a href="{% url 'appointments:appointment_detail' appt.id %}" class="btn btn-sm btn-light border">Details</a>
+                  </td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="4" class="text-center py-3 text-muted">No appointments found.</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

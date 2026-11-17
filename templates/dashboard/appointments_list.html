@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Hospital Appointments - Admin Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-4 my-4">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-1"><i class="bi bi-calendar-event text-primary me-2"></i> All Hospital Appointments</h2>
+      <p class="text-muted mb-0">Monitor patient booking status, doctor schedules, and clinical visits</p>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="card card-custom p-3 mb-4 shadow-sm">
+    <form method="get" class="row g-2 align-items-center">
+      <div class="col-md-3">
+        <input type="text" name="search" class="form-control" placeholder="Search patient, doctor, or reason..." value="{{ search_query }}">
+      </div>
+      <div class="col-md-3">
+        <select name="status" class="form-select">
+          <option value="">-- All Statuses --</option>
+          {% for val, label in status_choices %}
+            <option value="{{ val }}" {% if status_filter == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select name="department" class="form-select">
+          <option value="">-- All Departments --</option>
+          {% for dept in departments %}
+            <option value="{{ dept.id }}" {% if department_id == dept.id|stringformat:"s" %}selected{% endif %}>{{ dept.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <input type="date" name="date" class="form-control" value="{{ date_filter }}">
+      </div>
+      <div class="col-md-1 d-grid">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-funnel"></i></button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Appointments Table -->
+  <div class="card card-custom p-4 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>Date & Time</th>
+            <th>Patient</th>
+            <th>Attending Doctor</th>
+            <th>Department</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for appt in appointments %}
+            <tr>
+              <td class="text-muted small">#{{ appt.id }}</td>
+              <td>
+                <div class="fw-bold">{{ appt.appointment_date|date:"M d, Y" }}</div>
+                <span class="small text-muted">{{ appt.appointment_time|time:"g:i A" }}</span>
+              </td>
+              <td>
+                <div class="fw-semibold text-dark">{{ appt.patient.display_name }}</div>
+                <div class="small text-muted">{{ appt.patient.phone|default:"-" }}</div>
+              </td>
+              <td>
+                <div class="fw-semibold text-primary">{{ appt.doctor.display_name }}</div>
+                <div class="small text-muted">{{ appt.doctor.specialization }}</div>
+              </td>
+              <td>
+                <span class="badge bg-light text-dark border">{{ appt.doctor.department.name|default:"General" }}</span>
+              </td>
+              <td class="small text-muted" style="max-width: 180px;">
+                {{ appt.reason|truncatechars:45 }}
+              </td>
+              <td>
+                <span class="badge {{ appt.get_status_badge }}">{{ appt.status }}</span>
+              </td>
+              <td class="text-end text-nowrap">
+                <a href="{% url 'appointments:appointment_detail' appt.id %}" class="btn btn-sm btn-light border" title="View Details">
+                  <i class="bi bi-eye"></i> Details
+                </a>
+                <a href="{% url 'appointments:update_appointment_status' appt.id %}" class="btn btn-sm btn-outline-primary" title="Update Status">
+                  <i class="bi bi-pencil"></i>
+                </a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="8" class="text-center py-5 text-muted">No appointments found matching your filter criteria.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

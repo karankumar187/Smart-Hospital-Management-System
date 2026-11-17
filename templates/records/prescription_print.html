@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prescription_#{{ prescription.id }}_{{ prescription.patient.display_name }}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <style>
+    body {
+      background-color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: #1e293b;
+    }
+    .print-container {
+      max-width: 850px;
+      margin: 30px auto;
+      background: #ffffff;
+      padding: 40px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+    }
+    .rx-symbol {
+      font-size: 2.5rem;
+      font-weight: bold;
+      font-family: serif;
+      color: #0284c7;
+    }
+    @media print {
+      body {
+        background-color: #ffffff;
+        margin: 0;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-container {
+        border: none;
+        padding: 0;
+        margin: 0;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container no-print mt-3 text-center">
+    <button onclick="window.print()" class="btn btn-primary px-4 py-2 me-2">
+      <i class="bi bi-printer me-2"></i> Print / Save as PDF
+    </button>
+    <button onclick="window.close()" class="btn btn-outline-secondary px-3 py-2">
+      Close
+    </button>
+  </div>
+
+  <div class="print-container">
+    <!-- Letterhead Header -->
+    <div class="row align-items-center border-bottom pb-4 mb-4">
+      <div class="col-8">
+        <h2 class="fw-bold text-primary mb-1">SMART HOSPITAL</h2>
+        <div class="fw-semibold text-secondary">Advanced Multi-Specialty Clinic & Academic Medical Center</div>
+        <div class="small text-muted">100 Health Sciences Way, Metro Medical District &bull; Tel: +1 (800) 555-CARE</div>
+        <div class="small text-muted">Email: records@smarthospital.org &bull; Web: www.smarthospital.org</div>
+      </div>
+      <div class="col-4 text-end">
+        <div class="badge bg-light text-dark border fs-6 px-3 py-2">Prescription #{{ prescription.id }}</div>
+        <div class="small text-muted mt-2">Date: <strong>{{ prescription.created_at|date:"F d, Y" }}</strong></div>
+      </div>
+    </div>
+
+    <!-- Doctor & Patient Summary -->
+    <div class="row g-3 p-3 bg-light rounded-3 mb-4 border">
+      <div class="col-6">
+        <div class="small text-muted text-uppercase fw-bold">Physician:</div>
+        <div class="fw-bold fs-5 text-dark">{{ prescription.doctor.display_name }}</div>
+        <div class="small text-muted">{{ prescription.doctor.specialization }} ({{ prescription.doctor.qualification }})</div>
+        <div class="small text-muted">Department: {{ prescription.doctor.department.name|default:"General Medicine" }}</div>
+      </div>
+      <div class="col-6">
+        <div class="small text-muted text-uppercase fw-bold">Patient:</div>
+        <div class="fw-bold fs-5 text-dark">{{ prescription.patient.display_name }}</div>
+        <div class="small text-muted">Gender: {{ prescription.patient.gender }} &bull; Age: {{ prescription.patient.age|default:"N/A" }} &bull; Blood: {{ prescription.patient.blood_group|default:"N/A" }}</div>
+        <div class="small text-muted">Phone: {{ prescription.patient.phone|default:"-" }}</div>
+      </div>
+    </div>
+
+    <!-- Diagnosis -->
+    {% if prescription.medical_record %}
+      <div class="mb-3">
+        <strong class="text-uppercase small text-muted">Clinical Diagnosis:</strong>
+        <div class="fw-bold text-dark fs-6">{{ prescription.medical_record.diagnosis }}</div>
+      </div>
+    {% endif %}
+
+    <!-- Rx Symbol & Medication Table -->
+    <div class="d-flex align-items-center mb-2">
+      <span class="rx-symbol me-2">℞</span>
+      <h6 class="fw-bold text-uppercase text-secondary mb-0">Medications & Dosage Regimen</h6>
+    </div>
+
+    <table class="table table-bordered align-middle small mb-4">
+      <thead class="table-light">
+        <tr>
+          <th style="width: 5%;">#</th>
+          <th style="width: 35%;">Medicine Name</th>
+          <th style="width: 15%;">Dosage</th>
+          <th style="width: 20%;">Frequency</th>
+          <th style="width: 12%;">Duration</th>
+          <th style="width: 13%;">Instructions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for med in medicines %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td class="fw-bold">{{ med.medicine_name }}</td>
+            <td>{{ med.dosage }}</td>
+            <td>{{ med.frequency }}</td>
+            <td>{{ med.duration }}</td>
+            <td>{{ med.instructions|default:"As directed" }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6" class="text-center py-3 text-muted">No medicines prescribed.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Advice Notes -->
+    {% if prescription.notes %}
+      <div class="p-3 border rounded-3 bg-light mb-4 small">
+        <strong class="d-block mb-1 text-uppercase text-muted">General Instructions & Precautions:</strong>
+        {{ prescription.notes|linebreaks }}
+      </div>
+    {% endif %}
+
+    {% if prescription.medical_record.follow_up_date %}
+      <div class="small mb-4 text-primary">
+        <strong>Next Review / Follow-Up:</strong> {{ prescription.medical_record.follow_up_date|date:"l, F d, Y" }}
+      </div>
+    {% endif %}
+
+    <!-- Signatures -->
+    <div class="row pt-5 mt-5">
+      <div class="col-6 small text-muted">
+        <div><em>Official Digital Healthcare Record</em></div>
+        <div>System Record ID: EMR-RX-{{ prescription.id }}</div>
+      </div>
+      <div class="col-6 text-end">
+        <div class="mb-4">________________________________</div>
+        <div class="fw-bold">{{ prescription.doctor.display_name }}</div>
+        <div class="small text-muted">{{ prescription.doctor.qualification }}</div>
+        <div class="small text-muted">Signature & Clinical Seal</div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

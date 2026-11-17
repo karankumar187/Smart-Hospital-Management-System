@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Department - Admin Portal{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-5">
+      <div class="card card-custom p-4 text-center border-danger border-opacity-25 shadow-sm">
+        <div class="stat-icon-wrapper bg-danger-subtle text-danger mx-auto mb-3" style="width: 60px; height: 60px;">
+          <i class="bi bi-trash fs-2"></i>
+        </div>
+        <h4 class="fw-bold text-danger">Delete Department</h4>
+        <p class="text-muted small">Are you sure you want to remove the department:</p>
+        
+        <div class="p-3 bg-light rounded-3 mb-4 border">
+          <h5 class="fw-bold mb-1">{{ department.name }}</h5>
+          <div class="small text-muted">{{ department.doctors.count }} Doctors associated</div>
+        </div>
+
+        <form method="post">
+          {% csrf_token %}
+          <div class="d-flex justify-content-center gap-3">
+            <a href="{% url 'dashboard:admin_departments_list' %}" class="btn btn-outline-secondary px-4">Cancel</a>
+            <button type="submit" class="btn btn-danger px-4 fw-semibold">Confirm Delete</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
