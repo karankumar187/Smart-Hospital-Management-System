@@ -16,6 +16,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.trycloudflare.com',
+    'http://*.trycloudflare.com',
+    'https://*.loca.lt',
+    'https://*.ngrok-free.app',
+    'https://*.pythonanywhere.com',
+]
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
