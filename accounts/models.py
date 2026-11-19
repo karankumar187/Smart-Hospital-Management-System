@@ -32,11 +32,11 @@ class User(AbstractUser):
 
     def get_role_display_badge(self):
         badges = {
-            self.ROLE_ADMIN: 'bg-danger',
-            self.ROLE_DOCTOR: 'bg-primary',
-            self.ROLE_PATIENT: 'bg-success',
+            self.ROLE_ADMIN: 'badge-role-admin',
+            self.ROLE_DOCTOR: 'badge-role-doctor',
+            self.ROLE_PATIENT: 'badge-role-patient',
         }
-        return badges.get(self.role, 'bg-secondary')
+        return badges.get(self.role, 'badge-soft-secondary')
 
     def __str__(self):
         role_label = self.get_role_display()

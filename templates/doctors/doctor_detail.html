@@ -16,11 +16,11 @@
     <!-- Doctor Profile Summary Card -->
     <div class="col-lg-4">
       <div class="card card-custom p-4 text-center">
-        <div class="mx-auto mb-3" style="width: 110px; height: 110px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 3.5rem;">
+        <div class="mx-auto mb-3" style="width: 110px; height: 110px; border-radius: 50%; background: var(--brand-gradient); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; box-shadow: 0 4px 18px var(--primary-glow);">
           <i class="bi bi-person-fill"></i>
         </div>
-        <h3 class="fw-bold mb-1">{{ doctor.display_name }}</h3>
-        <span class="badge bg-primary-subtle text-primary px-3 py-2 fs-6 mb-3">{{ doctor.specialization }}</span>
+        <h3 class="fw-bold mb-1 text-dark">{{ doctor.display_name }}</h3>
+        <span class="badge badge-soft-primary px-3 py-1.5 fs-6 mb-3">{{ doctor.specialization }}</span>
         
         <div class="border-top pt-3 text-start small">
           <p class="mb-2"><i class="bi bi-hospital text-primary me-2"></i><strong>Department:</strong> {{ doctor.department.name|default:"General Medicine" }}</p>
@@ -35,7 +35,7 @@
         </div>
 
         <div class="mt-4">
-          <a href="{% url 'appointments:book_appointment' %}?doctor={{ doctor.id }}" class="btn btn-primary w-100 py-2 fw-semibold">
+          <a href="{% url 'appointments:book_appointment' %}?doctor={{ doctor.id }}" class="btn btn-gradient w-100 py-2.5 fw-bold shadow-sm">
             <i class="bi bi-calendar-plus me-1"></i> Book Consultation
           </a>
         </div>

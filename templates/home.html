@@ -1,53 +1,103 @@
 {% extends 'base.html' %}
 
-{% block title %}Smart Hospital Management System - Home{% endblock %}
+{% block title %}Smart Hospital - Advanced Healthcare Management & Clinical Portal{% endblock %}
 
 {% block content %}
-<!-- Hero Banner -->
+<!-- Modern Hero Banner Section -->
 <div class="hero-banner mb-5">
   <div class="container">
-    <div class="row align-items-center">
+    <div class="row align-items-center g-5">
       <div class="col-lg-7">
-        <span class="badge bg-info text-dark px-3 py-2 rounded-pill mb-3">
-          <i class="bi bi-shield-check me-1"></i> Next-Gen Healthcare Platform
-        </span>
-        <h1 class="display-4 fw-bold mb-3">Smart Hospital Management System</h1>
-        <p class="lead mb-4 text-white-50">
-          A centralized, secure digital platform simplifying clinical operations, patient consultations, appointment scheduling, and electronic medical records.
+        <div class="hero-badge-pill mb-3">
+          <span class="pulse-dot"></span>
+          <span>Next-Generation Healthcare EMR Platform</span>
+        </div>
+        
+        <h1 class="display-4 fw-extrabold text-white mb-3" style="letter-spacing: -0.03em;">
+          Intelligent Healthcare & Clinical Management
+        </h1>
+        
+        <p class="lead mb-4 text-white-50" style="font-size: 1.15rem; max-width: 620px;">
+          A centralized, secure digital platform connecting patients, specialist physicians, and hospital administration with real-time conflict-free appointments, digital prescriptions, and electronic medical records.
         </p>
+
         <div class="d-flex flex-wrap gap-3">
           {% if user.is_authenticated %}
-            <a href="{% url 'accounts:dashboard_redirect' %}" class="btn btn-primary btn-lg px-4 shadow">
+            <a href="{% url 'accounts:dashboard_redirect' %}" class="btn btn-gradient btn-lg px-4 shadow">
               <i class="bi bi-speedometer2 me-2"></i> Go to My Dashboard
             </a>
           {% else %}
-            <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg px-4 shadow">
-              <i class="bi bi-person-plus me-2"></i> Register as Patient
+            <a href="{% url 'accounts:register' %}" class="btn btn-gradient btn-lg px-4 shadow">
+              <i class="bi bi-person-plus-fill me-2"></i> Register as Patient
             </a>
             <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg px-4">
               <i class="bi bi-box-arrow-in-right me-2"></i> Portal Login
             </a>
           {% endif %}
-          <a href="{% url 'doctors:doctor_list' %}" class="btn btn-light btn-lg px-4">
-            <i class="bi bi-search me-2 text-primary"></i> Find Doctors
+          <a href="{% url 'doctors:doctor_list' %}" class="btn btn-light btn-lg px-4 shadow-sm text-dark fw-bold">
+            <i class="bi bi-search me-2 text-primary"></i> Find Specialist
           </a>
         </div>
+
+        <!-- Trust Badges -->
+        <div class="d-flex flex-wrap align-items-center gap-4 mt-5 pt-3 border-top border-white border-opacity-10 text-white-50 small">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-shield-check text-info fs-5 me-2"></i> Role-Based Access Control
+          </div>
+          <div class="d-flex align-items-center">
+            <i class="bi bi-check2-circle text-success fs-5 me-2"></i> 0% Double Booking Guarantee
+          </div>
+          <div class="d-flex align-items-center">
+            <i class="bi bi-file-earmark-medical text-primary fs-5 me-2"></i> Itemized Digital Rx
+          </div>
+        </div>
       </div>
-      <div class="col-lg-5 d-none d-lg-block text-center">
-        <div class="p-4 bg-white bg-opacity-10 rounded-4 border border-light border-opacity-25 shadow-lg">
-          <i class="bi bi-hospital fs-1 text-info mb-3 d-block"></i>
-          <h4 class="fw-bold mb-2">Hospital Operations Hub</h4>
-          <p class="small text-white-50 mb-3">Integrated workflows for Patients, Physicians, and Healthcare Administrators.</p>
-          <div class="text-start bg-dark bg-opacity-50 p-3 rounded-3 small">
-            <div class="d-flex align-items-center mb-2">
-              <i class="bi bi-check-circle-fill text-success me-2"></i> Real-time Slot Conflict Prevention
-            </div>
-            <div class="d-flex align-items-center mb-2">
-              <i class="bi bi-check-circle-fill text-success me-2"></i> Multi-item Digital Prescriptions
-            </div>
+
+      <!-- Hero Visual Hub Card -->
+      <div class="col-lg-5 d-none d-lg-block">
+        <div class="hero-glass-card text-white">
+          <div class="d-flex align-items-center justify-content-between mb-4">
             <div class="d-flex align-items-center">
-              <i class="bi bi-check-circle-fill text-success me-2"></i> Role-Based Access Control (RBAC)
+              <div class="navbar-brand-icon me-3" style="width: 44px; height: 44px;">
+                <i class="bi bi-hospital fs-4"></i>
+              </div>
+              <div>
+                <h5 class="fw-bold mb-0 text-white">Clinical Hub</h5>
+                <small class="text-white-50">Live Operational Status</small>
+              </div>
             </div>
+            <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50 px-2.5 py-1">
+              <span class="pulse-dot"></span> System Live
+            </span>
+          </div>
+
+          <div class="p-3 bg-dark bg-opacity-40 rounded-3 mb-3 border border-white border-opacity-10">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="small text-white-50">Patient Satisfaction Score</span>
+              <span class="small fw-bold text-info">99.4% Exceptional</span>
+            </div>
+            <div class="progress" style="height: 6px; background-color: rgba(255,255,255,0.1);">
+              <div class="progress-bar bg-info" role="progressbar" style="width: 99.4%;" aria-valuenow="99.4" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+
+          <div class="row g-2 text-start">
+            <div class="col-6">
+              <div class="p-3 bg-white bg-opacity-10 rounded-3 border border-white border-opacity-10">
+                <span class="text-white-50 small d-block">Specialists Active</span>
+                <strong class="fs-4 text-white">{{ stats.doctors_count }} Doctors</strong>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="p-3 bg-white bg-opacity-10 rounded-3 border border-white border-opacity-10">
+                <span class="text-white-50 small d-block">Departments</span>
+                <strong class="fs-4 text-white">{{ stats.departments_count }} Clinics</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-3 pt-3 border-top border-white border-opacity-10 text-center">
+            <small class="text-white-50"><i class="bi bi-lock-fill text-info me-1"></i> End-to-end encrypted medical data records</small>
           </div>
         </div>
       </div>
@@ -58,46 +108,49 @@
 <div class="container mb-5">
   <!-- Operational Metrics Counter -->
   <div class="row g-3 mb-5">
-    <div class="col-md-3 col-6">
+    <div class="col-lg-3 col-6">
       <div class="stat-card">
         <div>
-          <span class="text-muted small fw-semibold">Specialist Doctors</span>
-          <h3 class="fw-bold mb-0 mt-1 text-primary">{{ stats.doctors_count }}</h3>
+          <span class="stat-label">Specialist Doctors</span>
+          <h3 class="stat-value text-primary">{{ stats.doctors_count }}</h3>
         </div>
-        <div class="stat-icon-wrapper bg-primary-subtle text-primary">
+        <div class="stat-icon-wrapper stat-icon-primary">
           <i class="bi bi-person-badge"></i>
         </div>
       </div>
     </div>
-    <div class="col-md-3 col-6">
+    
+    <div class="col-lg-3 col-6">
       <div class="stat-card">
         <div>
-          <span class="text-muted small fw-semibold">Clinical Departments</span>
-          <h3 class="fw-bold mb-0 mt-1 text-info">{{ stats.departments_count }}</h3>
+          <span class="stat-label">Clinical Departments</span>
+          <h3 class="stat-value text-secondary">{{ stats.departments_count }}</h3>
         </div>
-        <div class="stat-icon-wrapper bg-info-subtle text-info">
+        <div class="stat-icon-wrapper stat-icon-secondary">
           <i class="bi bi-hospital"></i>
         </div>
       </div>
     </div>
-    <div class="col-md-3 col-6">
+
+    <div class="col-lg-3 col-6">
       <div class="stat-card">
         <div>
-          <span class="text-muted small fw-semibold">Patients Served</span>
-          <h3 class="fw-bold mb-0 mt-1 text-success">{{ stats.patients_served }}+</h3>
+          <span class="stat-label">Patients Served</span>
+          <h3 class="stat-value text-success">{{ stats.patients_served }}+</h3>
         </div>
-        <div class="stat-icon-wrapper bg-success-subtle text-success">
+        <div class="stat-icon-wrapper stat-icon-success">
           <i class="bi bi-people"></i>
         </div>
       </div>
     </div>
-    <div class="col-md-3 col-6">
+
+    <div class="col-lg-3 col-6">
       <div class="stat-card">
         <div>
-          <span class="text-muted small fw-semibold">Satisfaction Rate</span>
-          <h3 class="fw-bold mb-0 mt-1 text-warning">{{ stats.satisfaction_rate }}</h3>
+          <span class="stat-label">Patient Satisfaction</span>
+          <h3 class="stat-value text-warning">{{ stats.satisfaction_rate }}</h3>
         </div>
-        <div class="stat-icon-wrapper bg-warning-subtle text-warning">
+        <div class="stat-icon-wrapper stat-icon-warning">
           <i class="bi bi-star-fill"></i>
         </div>
       </div>
@@ -106,76 +159,84 @@
 
   <!-- Key Hospital Features -->
   <div class="text-center mb-5">
-    <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fw-semibold">Core Capabilities</span>
+    <span class="badge badge-soft-primary px-3 py-1.5 rounded-pill fw-semibold text-uppercase" style="letter-spacing: 0.05em; font-size: 0.78rem;">
+      <i class="bi bi-lightning-charge-fill me-1"></i> Core Capabilities
+    </span>
     <h2 class="fw-bold mt-2">Comprehensive Digital Healthcare Experience</h2>
-    <p class="text-muted">Designed for patients, healthcare providers, and clinical staff.</p>
+    <p class="text-muted" style="max-width: 600px; margin: 0 auto;">
+      Purpose-built interfaces designed for patient convenience, doctor productivity, and streamlined administrative governance.
+    </p>
   </div>
 
   <div class="row g-4 mb-5">
     <div class="col-md-4">
       <div class="card card-custom h-100 p-4">
-        <div class="stat-icon-wrapper bg-primary-subtle text-primary mb-3">
+        <div class="stat-icon-wrapper stat-icon-primary mb-3">
           <i class="bi bi-calendar-check"></i>
         </div>
-        <h5 class="fw-bold">Online Appointment Booking</h5>
-        <p class="text-muted mb-0">
-          Search specialist doctors by department, review availability, and book slots in seconds without waiting in hospital queues.
+        <h5 class="fw-bold mb-2">Conflict-Free Booking</h5>
+        <p class="text-muted mb-0 small" style="line-height: 1.6;">
+          Real-time slot engine checks availability instantaneously, prevents overlapping slots, and eliminates waiting room bottlenecks.
         </p>
       </div>
     </div>
+    
     <div class="col-md-4">
       <div class="card card-custom h-100 p-4">
-        <div class="stat-icon-wrapper bg-success-subtle text-success mb-3">
+        <div class="stat-icon-wrapper stat-icon-secondary mb-3">
           <i class="bi bi-prescription2"></i>
         </div>
-        <h5 class="fw-bold">Digital Prescriptions</h5>
-        <p class="text-muted mb-0">
-          Physicians generate itemized prescriptions with exact dosages, frequency, and instructions that patients can view and print anytime.
+        <h5 class="fw-bold mb-2">Digital Prescriptions</h5>
+        <p class="text-muted mb-0 small" style="line-height: 1.6;">
+          Physicians generate itemized prescriptions with exact dosages, schedules, and instructions that patients can view and print on official hospital letterheads.
         </p>
       </div>
     </div>
+
     <div class="col-md-4">
       <div class="card card-custom h-100 p-4">
-        <div class="stat-icon-wrapper bg-info-subtle text-info mb-3">
+        <div class="stat-icon-wrapper stat-icon-success mb-3">
           <i class="bi bi-file-earmark-medical"></i>
         </div>
-        <h5 class="fw-bold">Electronic Medical Records</h5>
-        <p class="text-muted mb-0">
-          Continuous record keeping of clinical diagnoses, symptoms, treatments, and follow-up schedules with high security and privacy.
+        <h5 class="fw-bold mb-2">Electronic Medical Records</h5>
+        <p class="text-muted mb-0 small" style="line-height: 1.6;">
+          Continuous record keeping of clinical diagnoses, presented symptoms, treatment therapies, and scheduled follow-ups with granular privacy isolation.
         </p>
       </div>
     </div>
   </div>
 
-  <!-- Clinical Departments -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
+  <!-- Clinical Departments Showcase -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
     <div>
-      <h3 class="fw-bold mb-1">Hospital Departments</h3>
-      <p class="text-muted mb-0">World-class specialized medical disciplines</p>
+      <h3 class="fw-bold mb-1">Clinical Departments</h3>
+      <p class="text-muted mb-0 small">Specialized disciplines offering outpatient consultations and advanced therapeutics</p>
     </div>
-    <a href="{% url 'doctors:doctor_list' %}" class="btn btn-outline-primary btn-sm">
-      View All Doctors <i class="bi bi-arrow-right ms-1"></i>
+    <a href="{% url 'doctors:doctor_list' %}" class="btn btn-outline-primary btn-sm mt-3 mt-md-0">
+      View All Departments & Doctors <i class="bi bi-arrow-right ms-1"></i>
     </a>
   </div>
 
   <div class="row g-4 mb-5">
     {% for dept in departments %}
       <div class="col-lg-4 col-md-6">
-        <div class="card card-custom h-100 p-4">
+        <div class="card card-custom h-100 p-4 d-flex flex-column">
           <div class="d-flex align-items-center mb-3">
-            <div class="stat-icon-wrapper bg-light text-primary me-3 border">
+            <div class="stat-icon-wrapper stat-icon-primary me-3" style="width: 48px; height: 48px; font-size: 1.4rem;">
               <i class="bi {{ dept.icon|default:'bi-hospital' }}"></i>
             </div>
             <div>
-              <h5 class="fw-bold mb-0">{{ dept.name }}</h5>
-              <span class="badge bg-secondary-subtle text-dark small mt-1">
-                {{ dept.doctors.count }} Doctor{{ dept.doctors.count|pluralize }}
+              <h5 class="fw-bold mb-0 text-dark">{{ dept.name }}</h5>
+              <span class="badge badge-soft-secondary small mt-1">
+                {{ dept.doctors.count }} Specialist{{ dept.doctors.count|pluralize }}
               </span>
             </div>
           </div>
-          <p class="text-muted small mb-3">{{ dept.description|truncatewords:20 }}</p>
-          <a href="{% url 'doctors:doctor_list' %}?department={{ dept.id }}" class="text-primary text-decoration-none fw-semibold small mt-auto">
-            Consult Specialist in {{ dept.name }} <i class="bi bi-chevron-right ms-1"></i>
+          <p class="text-muted small mb-4 flex-grow-1" style="line-height: 1.6;">
+            {{ dept.description|truncatewords:20 }}
+          </p>
+          <a href="{% url 'doctors:doctor_list' %}?department={{ dept.id }}" class="text-primary fw-semibold small text-decoration-none mt-auto d-inline-flex align-items-center">
+            Browse {{ dept.name }} Doctors <i class="bi bi-chevron-right ms-1"></i>
           </a>
         </div>
       </div>
@@ -186,32 +247,42 @@
     {% endfor %}
   </div>
 
-  <!-- Featured Specialists -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
+  <!-- Featured Specialists Showcase -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
     <div>
       <h3 class="fw-bold mb-1">Our Leading Specialists</h3>
-      <p class="text-muted mb-0">Certified, experienced medical practitioners ready to help</p>
+      <p class="text-muted mb-0 small">Board-certified clinicians and consultants dedicated to patient-centered care</p>
     </div>
-    <a href="{% url 'doctors:doctor_list' %}" class="btn btn-outline-primary btn-sm">
-      Browse All Doctors <i class="bi bi-arrow-right ms-1"></i>
+    <a href="{% url 'doctors:doctor_list' %}" class="btn btn-outline-primary btn-sm mt-3 mt-md-0">
+      Browse All Specialists <i class="bi bi-arrow-right ms-1"></i>
     </a>
   </div>
 
   <div class="row g-4 mb-5">
     {% for doctor in doctors %}
       <div class="col-lg-3 col-md-6">
-        <div class="card card-custom h-100 text-center p-4">
-          <div class="mx-auto mb-3" style="width: 75px; height: 75px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+        <div class="card card-custom h-100 text-center p-4 d-flex flex-column">
+          <div class="mx-auto mb-3" style="width: 78px; height: 78px; border-radius: 50%; background: var(--brand-gradient); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; box-shadow: 0 4px 14px var(--primary-glow);">
             <i class="bi bi-person-fill"></i>
           </div>
-          <h5 class="fw-bold mb-1">{{ doctor.display_name }}</h5>
-          <span class="badge bg-primary-subtle text-primary mb-2">{{ doctor.specialization }}</span>
-          <p class="text-muted small mb-2"><i class="bi bi-hospital me-1"></i> {{ doctor.department.name|default:"General" }}</p>
-          <p class="small text-secondary mb-3"><i class="bi bi-award me-1"></i> {{ doctor.qualification }} &bull; {{ doctor.experience_years }} yrs exp</p>
-          <div class="mt-auto">
-            <span class="d-block fw-bold text-dark mb-2">Fee: ${{ doctor.consultation_fee }}</span>
-            <a href="{% url 'appointments:book_appointment' %}?doctor={{ doctor.id }}" class="btn btn-sm btn-primary w-100">
-              <i class="bi bi-calendar-plus me-1"></i> Book Visit
+          
+          <h5 class="fw-bold mb-1 text-dark">{{ doctor.display_name }}</h5>
+          <span class="badge badge-soft-primary mb-2 mx-auto" style="max-width: 90%;">{{ doctor.specialization }}</span>
+          
+          <div class="small text-muted mb-2">
+            <i class="bi bi-hospital text-primary me-1"></i> {{ doctor.department.name|default:"General Medicine" }}
+          </div>
+          <div class="small text-muted mb-3">
+            <i class="bi bi-mortarboard me-1 text-secondary"></i> {{ doctor.qualification }} &bull; {{ doctor.experience_years }} yrs
+          </div>
+
+          <div class="mt-auto pt-3 border-top">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="small text-muted">Consultation Fee</span>
+              <strong class="fs-5 text-dark">${{ doctor.consultation_fee }}</strong>
+            </div>
+            <a href="{% url 'appointments:book_appointment' %}?doctor={{ doctor.id }}" class="btn btn-gradient w-100 btn-sm">
+              <i class="bi bi-calendar-plus me-1"></i> Book Appointment
             </a>
           </div>
         </div>
@@ -224,18 +295,20 @@
   </div>
 
   <!-- Emergency Support Banner -->
-  <div class="p-4 rounded-4 bg-danger-subtle border border-danger-subtle d-flex flex-column flex-md-row align-items-center justify-content-between">
+  <div class="p-4 p-md-5 rounded-4 border d-flex flex-column flex-md-row align-items-center justify-content-between shadow-sm" style="background: linear-gradient(135deg, #fff1f2 0%, #fee2e2 100%); border-color: #fecdd3 !important;">
     <div class="d-flex align-items-center mb-3 mb-md-0">
-      <div class="stat-icon-wrapper bg-danger text-white me-3">
+      <div class="stat-icon-wrapper stat-icon-danger me-4" style="width: 60px; height: 60px; font-size: 1.8rem;">
         <i class="bi bi-telephone-inbound-fill"></i>
       </div>
       <div>
-        <h4 class="fw-bold text-danger mb-1">In Need of Emergency Medical Assistance?</h4>
-        <p class="text-dark mb-0">Our 24/7 Trauma and Emergency Care Center operates round the clock with dedicated critical care specialists.</p>
+        <h4 class="fw-bold text-danger mb-1">Require Urgent Emergency Medical Care?</h4>
+        <p class="text-dark mb-0 small" style="max-width: 650px;">
+          Our 24/7 Level 1 Trauma, Resuscitation, and Acute Critical Care Center operates round the clock with dedicated trauma surgeons and critical care teams.
+        </p>
       </div>
     </div>
-    <a href="tel:+18005552273" class="btn btn-danger btn-lg px-4 text-nowrap">
-      <i class="bi bi-telephone-fill me-2"></i> Call +1 (800) 555-CARE
+    <a href="tel:+18005552273" class="btn btn-danger btn-lg px-4 text-nowrap shadow-sm">
+      <i class="bi bi-telephone-fill me-2"></i> +1 (800) 555-CARE
     </a>
   </div>
 </div>

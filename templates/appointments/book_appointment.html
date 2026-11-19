@@ -69,7 +69,7 @@
                 {% if form.reason.errors %}<div class="text-danger small">{{ form.reason.errors.0 }}</div>{% endif %}
               </div>
 
-              <button type="submit" class="btn btn-primary w-100 py-3 fw-bold shadow">
+              <button type="submit" class="btn btn-gradient w-100 py-3 fw-bold shadow-sm">
                 <i class="bi bi-calendar-check me-2"></i> Confirm & Book Appointment
               </button>
             </form>
@@ -100,9 +100,9 @@
             </ul>
           </div>
 
-          <div class="card card-custom p-4 text-center border-0 bg-primary-subtle text-primary">
-            <i class="bi bi-hospital fs-1 mb-2 d-block"></i>
-            <h6 class="fw-bold mb-1">Need Urgent Care?</h6>
+          <div class="card card-custom p-4 text-center" style="background: var(--medical-50); border: 1.5px solid var(--medical-200);">
+            <i class="bi bi-hospital fs-1 mb-2 d-block text-primary"></i>
+            <h6 class="fw-bold mb-1 text-dark">Need Urgent Care?</h6>
             <p class="small text-muted mb-3">If you are experiencing a life-threatening medical emergency, please contact our 24/7 hotline directly.</p>
             <a href="tel:+18005552273" class="btn btn-danger btn-sm">
               <i class="bi bi-telephone-fill me-1"></i> Emergency: +1 (800) 555-CARE

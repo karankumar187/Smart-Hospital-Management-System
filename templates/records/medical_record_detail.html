@@ -11,7 +11,7 @@
         <!-- Header -->
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom pb-4 mb-4">
           <div>
-            <span class="badge bg-primary-subtle text-primary fs-6 mb-2">Clinical Consultation Record</span>
+            <span class="badge badge-soft-primary fs-6 mb-2">Clinical Consultation Record</span>
             <h3 class="fw-bold mb-0">Record #{{ record.id }}</h3>
             <span class="text-muted small">Consultation Date: {{ record.created_at|date:"l, F d, Y at g:i A" }}</span>
           </div>
@@ -53,7 +53,7 @@
           </h5>
           <div class="mb-3">
             <label class="fw-semibold text-secondary small text-uppercase">Primary Diagnosis:</label>
-            <div class="p-3 bg-primary-subtle text-primary rounded-3 fw-bold fs-5">
+            <div class="p-3 rounded-3 fw-bold fs-5" style="background: var(--medical-50); color: var(--primary); border: 1px solid var(--medical-200);">
               {{ record.diagnosis }}
             </div>
           </div>
@@ -82,10 +82,10 @@
           {% endif %}
 
           {% if record.follow_up_date %}
-            <div class="p-3 bg-info-subtle text-dark rounded-3 border border-info-subtle d-flex align-items-center">
-              <i class="bi bi-calendar-event-fill text-info fs-4 me-3"></i>
+            <div class="p-3 rounded-3 d-flex align-items-center" style="background: var(--medical-50); border: 1px solid var(--medical-200);">
+              <i class="bi bi-calendar-event-fill text-primary fs-4 me-3"></i>
               <div>
-                <strong>Recommended Follow-up Visit:</strong>
+                <strong class="text-dark">Recommended Follow-up Visit:</strong>
                 <div class="text-primary fw-bold">{{ record.follow_up_date|date:"l, F d, Y" }}</div>
               </div>
             </div>
